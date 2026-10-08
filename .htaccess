@@ -1,0 +1,12 @@
+Options -Indexes
+DirectoryIndex index.php
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /rapidaid/
+</IfModule>
+
+<FilesMatch "\.(sql|log|md)$">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>

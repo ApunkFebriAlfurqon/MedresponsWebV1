@@ -1,0 +1,17 @@
+/* Extra dashboard polish */
+.sidebar::-webkit-scrollbar { width: 4px; }
+.sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+@media (max-width: 768px) {
+  .sidebar { transform: translateX(-100%); box-shadow: none; }
+  .sidebar.open { transform: translateX(0); box-shadow: 4px 0 30px rgba(0,0,0,0.4); }
+  .main-content { margin-left: 0 !important; }
+  .stats-grid { grid-template-columns: 1fr 1fr; }
+  #sidebar-toggle { display: flex !important; }
+  .content-area { padding: 16px; }
+}
+.map-icon { background: transparent !important; border: none !important; }
+@media print {
+  .sidebar, .topbar, .sos-button, .btn { display: none !important; }
+  .main-content { margin-left: 0 !important; }
+  body { background: white !important; color: black !important; }
+}
