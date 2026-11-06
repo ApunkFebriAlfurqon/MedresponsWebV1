@@ -9,8 +9,9 @@ define('DB_PASS', '');
 define('DB_NAME', 'rapidaid_db');
 define('DB_CHARSET', 'utf8mb4');
 
+$appUrl = getenv('RAPIDAID_APP_URL') ?: 'http://localhost:8000';
 define('APP_NAME', 'RapidAid');
-define('APP_URL', 'http://localhost:8000');
+define('APP_URL', rtrim($appUrl, '/'));
 define('APP_VERSION', '1.0.0');
 define('APP_DEBUG', true);
 

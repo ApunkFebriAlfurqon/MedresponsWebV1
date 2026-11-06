@@ -1453,6 +1453,34 @@ http://localhost/rapidaid/
 
 ---
 
+## Akses dari Perangkat Lain di Jaringan Lokal (LAN)
+
+Komputer yang menjalankan RapidAid harus tetap menyala dan terhubung ke jaringan yang sama dengan perangkat lain.
+
+### Jika menggunakan PHP built-in server
+
+1. Cari alamat IPv4 komputer server dengan menjalankan `ipconfig` di Command Prompt, lalu lihat bagian **IPv4 Address** pada adapter Wi-Fi/Ethernet yang sedang digunakan (contoh: `192.168.1.20`).
+2. Dari folder `rapidaid`, jalankan server agar menerima koneksi dari perangkat lain:
+
+   ```powershell
+   $env:RAPIDAID_APP_URL = "http://192.168.1.20:8000"
+   php -S 0.0.0.0:8000
+   ```
+
+   Ganti `192.168.1.20` dengan IPv4 komputer server. Variabel `RAPIDAID_APP_URL` perlu menggunakan alamat yang sama agar tautan login dan pengalihan aplikasi menuju komputer server, bukan `localhost` milik perangkat pengunjung.
+3. Dari ponsel/komputer lain pada Wi-Fi/LAN yang sama, buka `http://192.168.1.20:8000`.
+4. Jika tidak dapat dibuka, izinkan PHP pada **Windows Defender Firewall** untuk jaringan **Private** atau buat aturan inbound TCP untuk port `8000`. Jangan izinkan jaringan Public.
+
+Untuk XAMPP/Laragon, jalankan Apache seperti biasa dan atur `RAPIDAID_APP_URL` ke alamat LAN beserta folder proyek, misalnya `http://192.168.1.20/rapidaid`. Jika belum mengatur environment variable Apache, ubah nilai fallback `$appUrl` di `config/database.php` menjadi URL LAN tersebut. Jika URL tidak diatur, aplikasi menggunakan `http://localhost:8000`.
+
+## Akses dari Internet / Jarak Jauh
+
+Untuk akses di luar jaringan lokal, deploy aplikasi ke hosting/VPS dengan domain dan HTTPS, lalu atur `RAPIDAID_APP_URL` ke URL publik tersebut (contoh: `https://rapid.example.com`). Untuk akses pribadi sementara, gunakan VPN yang menghubungkan perangkat ke jaringan server.
+
+Jangan membuka port server pengembangan PHP (`php -S`) langsung ke internet atau melakukan port-forwarding tanpa pengamanan. Aplikasi ini menyimpan data akun dan informasi darurat; sebelum digunakan publik, gunakan HTTPS, kredensial database khusus (bukan akun default), matikan `APP_DEBUG`, batasi akses database dan direktori upload, serta siapkan pembaruan dan backup. Server pengembangan PHP hanya untuk pengujian.
+
+---
+
 # 33. Halaman yang Tersedia
 
 | Halaman                      | Fungsi              |
