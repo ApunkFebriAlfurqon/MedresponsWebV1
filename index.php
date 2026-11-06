@@ -114,7 +114,7 @@ $showcaseAmbulance = $showcaseAmbulances[0] ?? new Ambulance([
       </div>
       <div class="hero-showcase-image">
         <img src="assets/images/WhatsApp%20Image%202026-10-20%20at%206.47.50%20PM.jpeg?v=20261020-2" alt="Ambulans layanan darurat RapidAid" loading="eager" />
-        <span class="hero-image-caption">Emergency care, closer to you</span>
+        <span class="hero-image-caption"><?= clean($showcaseAmbulance->vehicle_type ?: 'Ambulance') ?> unit · Emergency care, closer to you</span>
       </div>
       <div style="display:flex;align-items:center;gap:12px;padding:14px;background:rgba(229,62,62,0.12);border-radius:12px;border:1px solid rgba(229,62,62,0.2);">
         <div style="width:40px;height:40px;border-radius:50%;background:var(--red);display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;">🚑</div>
