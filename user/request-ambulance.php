@@ -1,37 +1,9 @@
 <?php
-require_once '../includes/helpers.php';
-requireUserLogin();
-$user = currentUser();
-$hospitals = db()->fetchAll("SELECT * FROM hospitals WHERE status='active' ORDER BY name");
-$subscription = getUserActiveSubscription($user['id']);
+require_once __DIR__ . '/../controllers/EmergencyRequestController.php';
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $code = generateRequestCode();
-    $id = db()->insert('emergency_requests', [
-        'request_code'        => $code,
-        'user_id'             => $user['id'],
-        'pickup_address'      => clean($_POST['pickup_address']),
-        'pickup_latitude'     => $_POST['lat'] ?? null,
-        'pickup_longitude'    => $_POST['lng'] ?? null,
-        'destination_address' => clean($_POST['destination'] ?? ''),
-        'patient_name'        => clean($_POST['patient_name']),
-        'patient_age'         => (int)($_POST['patient_age'] ?? 0),
-        'condition_description'=> clean($_POST['condition']),
-        'hospital_id'         => $_POST['hospital_id'] ?: null,
-        'priority'            => $_POST['priority'] ?? 'medium',
-        'status'              => 'pending',
-    ]);
-    // auto-assign first available ambulance
-    $amb = db()->fetchOne("SELECT * FROM ambulances WHERE status='available' LIMIT 1");
-    if ($amb) {
-        db()->update('emergency_requests',
-            ['ambulance_id'=>$amb['id'],'driver_id'=>$amb['driver_id'],'status'=>'accepted','assigned_at'=>date('Y-m-d H:i:s')],
-            'id=?',[$id]);
-        db()->update('ambulances',['status'=>'on_duty'],'id=?',[$amb['id']]);
-    }
-    createNotification($user['id'],null,'Emergency Request Submitted',"Your request $code has been submitted and is being processed.",'success');
-    header("Location: track-request.php?id=$id"); exit();
-}
+$controller = new EmergencyRequestController();
+$viewData = $controller->index();
+extract($viewData, EXTR_SKIP);
 ?>
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
