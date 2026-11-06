@@ -1,5 +1,6 @@
 <?php
 require_once '../includes/helpers.php';
+require_once '../models/Ambulance.php';
 requireAdminLogin();
 
 $action = $_GET['action'] ?? 'list';
@@ -19,24 +20,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'equipment'      => clean($_POST['equipment']??''),
     ];
     if ($action === 'add') {
-        db()->insert('ambulances', $data);
+      (new Ambulance($data))->save();
         setFlash('success','Ambulance added successfully!');
     } elseif ($action === 'edit' && $id) {
-        db()->update('ambulances', $data, 'id=?', [$id]);
+      (new Ambulance(array_merge($data, ['id' => $id])))->save();
         setFlash('success','Ambulance updated successfully!');
     }
     header('Location: ambulances.php'); exit();
 }
 
 if ($action === 'delete' && $id) {
-    db()->update('ambulances',['status'=>'inactive','driver_id'=>null],'id=?',[$id]);
+  $ambulance = Ambulance::findById($id);
+  if ($ambulance) $ambulance->deactivate();
     setFlash('success','Ambulance removed.');
     header('Location: ambulances.php'); exit();
 }
 
-$ambulances = db()->fetchAll("SELECT a.*,d.full_name as driver_name FROM ambulances a LEFT JOIN drivers d ON a.driver_id=d.id ORDER BY a.created_at DESC");
+$ambulances = Ambulance::allWithDrivers();
 $drivers = db()->fetchAll("SELECT * FROM drivers WHERE status != 'inactive' ORDER BY full_name");
-$editItem = $id ? db()->fetchOne("SELECT * FROM ambulances WHERE id=?",[$id]) : null;
+$editItem = $id ? Ambulance::findById($id) : null;
 $flash = getFlash();
 ?>
 <!DOCTYPE html>
@@ -58,7 +60,7 @@ $flash = getFlash();
       <!-- Stats Row -->
       <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px;">
         <?php foreach(['available'=>['Available','green','✅'],'on_duty'=>['On Duty','red','🚑'],'maintenance'=>['Maintenance','','⚙️'],'inactive'=>['Inactive','','']] as $s=>[$l,$c,$i]): ?>
-        <div class="stat-card <?=$c?>"><div class="stat-icon <?=$c?>"><?=$i?></div><div><div class="stat-label"><?=$l?></div><div class="stat-value"><?=db()->count('ambulances',"status='$s'")?></div></div></div>
+        <div class="stat-card <?=$c?>"><div class="stat-icon <?=$c?>"><?=$i?></div><div><div class="stat-label"><?=$l?></div><div class="stat-value"><?=Ambulance::countByStatus($s)?></div></div></div>
         <?php endforeach; ?>
       </div>
 
@@ -77,16 +79,16 @@ $flash = getFlash();
               <?php foreach($ambulances as $i=>$a): ?>
               <tr>
                 <td><?=$i+1?></td>
-                <td><strong><?=clean($a['vehicle_number'])?></strong></td>
-                <td><span class="badge badge-info"><?=$a['vehicle_type']?></span></td>
-                <td><?=clean($a['make'])?> <?=clean($a['model'])?></td>
-                <td><?=$a['year']?></td>
-                <td><?=clean($a['driver_name']??'—')?></td>
-                <td><?=statusBadge($a['status'])?></td>
+                <td><strong><?=clean($a->vehicle_number)?></strong></td>
+                <td><span class="badge badge-info"><?=$a->vehicle_type?></span></td>
+                <td><?=clean($a->getVehicleLabel())?></td>
+                <td><?=$a->year?></td>
+                <td><?=clean($a->driver_name ?: '—')?></td>
+                <td title="<?=$a->isAvailable() ? 'Ready for dispatch' : 'Not currently available'?>"><?=statusBadge($a->status)?></td>
                 <td>
                   <div style="display:flex;gap:6px;">
-                    <a href="?action=edit&id=<?=$a['id']?>" class="btn btn-sm btn-ghost" style="border:1px solid var(--border);" onclick="openEditModal(<?=htmlspecialchars(json_encode($a))?>);return false;">✏️</a>
-                    <a href="?action=delete&id=<?=$a['id']?>" class="btn btn-sm btn-danger" onclick="return confirm('Remove this ambulance?')">🗑️</a>
+                    <a href="?action=edit&id=<?=$a->id?>" class="btn btn-sm btn-ghost" style="border:1px solid var(--border);" onclick="openEditModal(<?=htmlspecialchars(json_encode($a))?>);return false;">✏️</a>
+                    <a href="?action=delete&id=<?=$a->id?>" class="btn btn-sm btn-danger" onclick="return confirm('Remove this ambulance?')">🗑️</a>
                   </div>
                 </td>
               </tr>

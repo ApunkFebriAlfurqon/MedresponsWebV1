@@ -1,8 +1,18 @@
 <?php
 require_once 'includes/helpers.php';
+require_once 'models/Ambulance.php';
 startSession();
 $isLoggedIn = isUserLoggedIn();
 $currentUser = $isLoggedIn ? currentUser() : null;
+$showcaseAmbulances = Ambulance::allWithDrivers();
+$showcaseAmbulance = $showcaseAmbulances[0] ?? new Ambulance([
+  'vehicle_number' => 'RapidAid Unit',
+  'vehicle_type' => 'BLS',
+  'make' => 'Emergency Response',
+  'model' => 'Ambulance',
+  'driver_name' => 'RapidAid Dispatch Team',
+  'status' => 'available',
+]);
 ?>
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
@@ -11,81 +21,7 @@ $currentUser = $isLoggedIn ? currentUser() : null;
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>RapidAid - Emergency Ambulance Service | Fast. Reliable. Life-Saving.</title>
   <meta name="description" content="RapidAid provides 24/7 emergency ambulance services with real-time tracking, hospital integration, and subscription plans for individuals and families." />
-  <style>
-    html, body {
-      display: block !important;
-      background: #ffffff !important;
-      color: #111111 !important;
-      font-family: Arial, sans-serif !important;
-      line-height: 1.6 !important;
-      margin: 0 !important;
-      padding: 20px !important;
-    }
-
-    body * {
-      display: block !important;
-      visibility: visible !important;
-      opacity: 1 !important;
-      background: transparent !important;
-      border: none !important;
-      box-shadow: none !important;
-      text-shadow: none !important;
-      backdrop-filter: none !important;
-      -webkit-backdrop-filter: none !important;
-      float: none !important;
-      position: static !important;
-      transform: none !important;
-      animation: none !important;
-    }
-
-    .navbar,
-    .nav-links,
-    .nav-actions,
-    .theme-toggle,
-    .hamburger,
-    .hero-bg-grid,
-    .hero-glow,
-    .hero-visual,
-    .hero-card,
-    .hero-badge,
-    .hero-badge-dot,
-    .hero-stats,
-    .hero-actions,
-    .btn,
-    .badge,
-    .metric-row,
-    .metric,
-    .benefit-icon,
-    .about-visual,
-    .loader-logo,
-    .loader-bar,
-    #page-loader,
-    .emergency-bar,
-    .contact-section {
-      display: none !important;
-    }
-
-    .hero-content,
-    .section,
-    .container,
-    .about-grid,
-    .benefit-list,
-    .benefit-item,
-    .about-card,
-    .feature-card {
-      display: block !important;
-      margin: 0 !important;
-      padding: 0 !important;
-      border: none !important;
-      background: transparent !important;
-      box-shadow: none !important;
-    }
-
-    h1, h2, h3, h4, h5, p, li, span, a, div {
-      color: #111111 !important;
-      text-decoration: none !important;
-    }
-  </style>
+  <link rel="stylesheet" href="assets/css/main.css?v=20261020-2" />
 </head>
 <body>
 <!-- Page Loader -->
@@ -167,23 +103,26 @@ $currentUser = $isLoggedIn ? currentUser() : null;
     </div>
   </div>
 
-  <div class="hero-visual">
+  <div class="hero-visual" style="display:flex;">
     <div class="hero-card">
       <div class="hero-card-header">
         <div>
-          <div style="font-size:0.75rem;color:rgba(255,255,255,0.5);margin-bottom:4px;">ACTIVE REQUEST</div>
-          <div style="font-size:0.95rem;font-weight:700;color:white;">REQ-2025-0042</div>
+          <div class="hero-card-eyebrow">MEDRESPONS FLEET</div>
+          <div class="hero-card-unit"><?= clean($showcaseAmbulance->vehicle_number ?: 'RapidAid Unit') ?></div>
         </div>
-        <span class="badge badge-warning">On The Way</span>
+        <?= statusBadge($showcaseAmbulance->status) ?>
       </div>
-      <div style="background:rgba(255,255,255,0.06);border-radius:12px;height:160px;display:flex;align-items:center;justify-content:center;font-size:3rem;margin-bottom:16px;">🗺️</div>
+      <div class="hero-showcase-image">
+        <img src="assets/images/WhatsApp%20Image%202026-10-20%20at%206.47.50%20PM.jpeg?v=20261020-2" alt="Ambulans layanan darurat RapidAid" loading="eager" />
+        <span class="hero-image-caption">Emergency care, closer to you</span>
+      </div>
       <div style="display:flex;align-items:center;gap:12px;padding:14px;background:rgba(229,62,62,0.12);border-radius:12px;border:1px solid rgba(229,62,62,0.2);">
         <div style="width:40px;height:40px;border-radius:50%;background:var(--red);display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;">🚑</div>
         <div>
-          <div style="font-size:0.8rem;color:rgba(255,255,255,0.5);">Driver</div>
-          <div style="font-size:0.9rem;font-weight:600;color:white;">Eko Prasetyo • ⭐ 4.9</div>
+          <div style="font-size:0.8rem;color:rgba(255,255,255,0.5);">Unit / Driver</div>
+          <div style="font-size:0.9rem;font-weight:600;color:white;"><?= clean($showcaseAmbulance->driver_name ?: $showcaseAmbulance->getVehicleLabel()) ?></div>
         </div>
-        <div style="margin-left:auto;font-family:'Syne',sans-serif;font-size:1rem;font-weight:800;color:var(--red);">~8 min</div>
+        <div style="margin-left:auto;font-family:'Syne',sans-serif;font-size:0.85rem;font-weight:800;color:var(--red);"><?= clean($showcaseAmbulance->vehicle_type) ?></div>
       </div>
     </div>
   </div>
