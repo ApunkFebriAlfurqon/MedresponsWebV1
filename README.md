@@ -1037,6 +1037,24 @@ Coordinates
 
 Sehingga pengguna tidak perlu mengetik alamat secara manual.
 
+## Alur API dan status request
+
+Halaman permintaan ambulans mengirim koordinat ke endpoint `api/reverse-geocode.php` menggunakan metode `POST` dan body JSON:
+
+```json
+{"lat": -7.2575, "lng": 112.7521}
+```
+
+Endpoint memeriksa autentikasi dan rentang koordinat, lalu meminta alamat ke Nominatim. Respons sukses berisi alamat dan detail lokasi dalam format JSON, misalnya area, kota, wilayah, kode pos, negara, serta koordinat. Halaman menampilkan alamat pada kolom lokasi penjemputan dan detailnya pada panel data lokasi.
+
+Antarmuka memberi feedback selama proses berlangsung:
+
+* **Loading** — lookup alamat sedang diproses.
+* **Sukses** — alamat dan detail lokasi ditampilkan.
+* **Gagal** — pesan kesalahan ditampilkan, koordinat tetap digunakan sebagai lokasi penjemputan, dan tombol coba lagi tersedia.
+
+Jika beberapa lookup berjalan berurutan, hasil request yang lebih lama diabaikan agar tidak menimpa pilihan lokasi terbaru. Endpoint dapat mengembalikan status HTTP `400` untuk koordinat tidak valid, `401` jika sesi berakhir, `404` jika alamat tidak ditemukan, `502` jika layanan alamat gagal diakses, atau `503` jika lookup sementara tidak tersedia.
+
 ---
 
 # 21. Sistem Pembayaran
