@@ -14,6 +14,7 @@ $adminRole = $_SESSION['admin_role'] ?? 'admin';
     <div class="nav-section-label">Management</div>
     <a href="users.php" class="sidebar-link <?=$currentPage==='users.php'?'active':''?>"><i class="fas fa-users"></i> Users</a>
     <a href="subscriptions.php" class="sidebar-link <?=$currentPage==='subscriptions.php'?'active':''?>"><i class="fas fa-gem"></i> Subscriptions</a>
+    <a href="programs.php" class="sidebar-link <?=$currentPage==='programs.php'?'active':''?>"><i class="fas fa-graduation-cap"></i> Programs</a>
     <a href="payments.php" class="sidebar-link <?=$currentPage==='payments.php'?'active':''?>"><i class="fas fa-money-bill-wave"></i> Payments</a>
     <a href="requests.php" class="sidebar-link <?=$currentPage==='requests.php'?'active':''?>"><i class="fas fa-ambulance"></i> Emergency Requests</a>
     <div class="nav-section-label">Fleet</div>

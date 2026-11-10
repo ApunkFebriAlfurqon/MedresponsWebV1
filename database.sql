@@ -220,6 +220,17 @@ CREATE TABLE notifications (
 );
 
 -- ============================================================
+-- TABLE: programs
+-- ============================================================
+CREATE TABLE programs (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nama VARCHAR(255) NOT NULL,
+    deskripsi TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- ============================================================
 -- SAMPLE DATA
 -- ============================================================
 
