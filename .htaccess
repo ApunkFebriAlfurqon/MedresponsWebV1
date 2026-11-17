@@ -4,6 +4,8 @@ DirectoryIndex index.php
 <IfModule mod_rewrite.c>
     RewriteEngine On
     RewriteBase /rapidaid/
+    RewriteRule ^api/programs/?$ api/programs.php [QSA,L]
+    RewriteRule ^api/programs/([0-9]+)/?$ api/programs.php?id=$1 [QSA,L]
 </IfModule>
 
 <FilesMatch "\.(sql|log|md)$">

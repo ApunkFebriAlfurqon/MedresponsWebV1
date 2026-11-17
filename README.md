@@ -354,6 +354,29 @@ API dapat digunakan untuk kebutuhan seperti:
 * reverse geocoding
 * proses AJAX
 
+### REST API Program
+
+Endpoint Program tersedia melalui Apache `mod_rewrite`:
+
+| Method | Endpoint | Fungsi |
+| --- | --- | --- |
+| `GET` | `/api/programs` | Mengambil semua program |
+| `POST` | `/api/programs` | Membuat program |
+| `GET` | `/api/programs/{id}` | Mengambil detail program |
+| `PUT` / `PATCH` | `/api/programs/{id}` | Memperbarui program |
+| `DELETE` | `/api/programs/{id}` | Menghapus program |
+
+API memerlukan sesi login admin. Request `POST`, `PUT`, `PATCH`, dan `DELETE` juga harus menyertakan token dari header `X-CSRF-Token`. Token dikirim pada response header endpoint GET. Request yang membuat atau memperbarui program menggunakan `Content-Type: application/json` dan body seperti berikut:
+
+```json
+{
+   "nama": "Pendidikan",
+   "deskripsi": "Program di bidang pendidikan."
+}
+```
+
+Nama dan deskripsi wajib diisi; nama maksimal 100 karakter. Response validasi menggunakan status `422`, sesi tidak valid `401`, token CSRF tidak valid `403`, dan program yang tidak ditemukan `404`.
+
 ---
 
 # 7. Folder `assets/`
