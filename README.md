@@ -1560,3 +1560,20 @@ Secara keseluruhan, RapidAid memiliki tiga bagian utama:
 ```
 
 Program ini tidak hanya berfungsi sebagai website informasi ambulans, tetapi merupakan **sistem layanan ambulans berbasis web** yang mencakup proses permintaan, lokasi, tracking, pembayaran, subscription, notifikasi, administrasi, dan pelaporan.
+
+---
+
+# 35. Migrasi Laravel Bertahap
+
+Aplikasi PHP native pada root project tetap dipertahankan dan masih berjalan seperti sebelumnya. Modul Program versi Laravel berada terpisah di folder `laravel/`, sehingga proses migrasi dapat dilakukan bertahap tanpa menghapus fitur lama.
+
+Laravel menggunakan database SQLite terpisah secara default. Untuk menjalankan migration dan test modul Program:
+
+```powershell
+cd laravel
+php artisan migrate
+php artisan test
+php artisan serve
+```
+
+REST API Program Laravel berada di `/api/programs` dan dilindungi Sanctum. Klien memperoleh bearer token melalui `POST /api/login`, lalu mengirim token tersebut untuk mengakses endpoint Program. Database Laravel belum disambungkan ke database MySQL PHP native; penggabungan data dilakukan saat tahap migrasi database berikutnya.
