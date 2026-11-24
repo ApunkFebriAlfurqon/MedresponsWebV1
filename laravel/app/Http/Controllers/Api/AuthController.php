@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Firebase\JWT\JWT;
 
 class AuthController extends Controller
 {
@@ -23,16 +24,29 @@ class AuthController extends Controller
             return response()->json(['message' => 'Email atau password salah.'], 401);
         }
 
+        $now = time();
+        $token = JWT::encode([
+            'iss' => config('app.url'),
+            'sub' => $user->id,
+            'iat' => $now,
+            'exp' => $now + 3600,
+        ], $this->jwtSecret(), 'HS256');
+
         return response()->json([
             'token_type' => 'Bearer',
-            'access_token' => $user->createToken('program-api')->plainTextToken,
+            'access_token' => $token,
         ]);
     }
 
     public function logout(Request $request): JsonResponse
     {
-        $request->user()->currentAccessToken()?->delete();
-
         return response()->json(['message' => 'Berhasil logout.']);
+    }
+
+    private function jwtSecret(): string
+    {
+        $secret = env('JWT_SECRET');
+
+        return is_string($secret) && $secret !== '' ? $secret : (string) config('app.key');
     }
 }

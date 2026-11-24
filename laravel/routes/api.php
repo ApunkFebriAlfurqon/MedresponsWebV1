@@ -9,10 +9,10 @@ Route::post('/login', [AuthController::class, 'login']);
 
 Route::get('/user', function (Request $request) {
     return $request->user();
-})->middleware('auth:sanctum');
+})->middleware('jwt');
 
 Route::apiResource('programs', ProgramController::class)
-    ->middleware('auth:sanctum');
+    ->middleware('jwt');
 
 Route::post('/logout', [AuthController::class, 'logout'])
-    ->middleware('auth:sanctum');
+    ->middleware('jwt');
